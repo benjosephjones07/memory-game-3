@@ -8,6 +8,8 @@ const app = () => {
 
     const timeDisplay = document.querySelector('.time-display');
 
+    const timeSelect = document.querySelectorAll('.time-select button');
+
     const outlineLength = outline.getTotalLength();
     
     let fakeDuration = 600;
@@ -15,8 +17,23 @@ const app = () => {
     outline.style.strokeDasharray = outlineLength;
     outline.style.strokeDashoffset = outlineLength;
 
+    sounds.forEach(sound => {
+        sound.addEventListener('click', function(){
+            song.src = this.getAttribute('data-sound');
+            video.src = this.getAttribute('data-video');
+            checkPlaying(song);
+        })
+    })
+
     play.addEventListener('click', () => {
         checkPlaying(song);
+    });
+
+    timeSelect.forEach(option => {
+        option.addEventListener('click', function(){
+            fakeDuration = this.getAttribute('data-time');
+            timeDisplay.textContent = `${Math.floor(fakeDuration / 60)}:${Math.floor(fakeDuration % 60)}`;
+        });
     });
 
     const checkPlaying = song => {
@@ -39,10 +56,16 @@ const app = () => {
 
         let progress = outlineLength - (currentTime/fakeDuration) * outlineLength;
         outline.style.strokeDasharray = progress;
-    }
 
+        timeDisplay.textContent = `${minutes}:${seconds}`;
 
-
+        if(currentTime >= fakeDuration){
+            song.pause();
+            song.currentTime = 0;
+            play.src = 'assets/svg/play.svg';
+            video.pause();
+        }
+    };
 };
 
 
